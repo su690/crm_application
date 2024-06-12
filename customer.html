@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Audience Builder</title>
+    <link rel="stylesheet" href="a.css">
+    <style>
+        
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+        }
+        button {
+            margin: 10px;
+        }
+        .rule {
+            margin-bottom: 10px;
+        }
+        #campaign-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        #campaign-list li {
+            background: #f2f2f2;
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+
+        /* CSS for Communication Log */
+        #communication-log {
+            margin-top: 50px;
+            padding: 20px;
+            background-color: #f0f8ff;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .log-entry {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #007BFF;
+        }
+        .log-entry.failed {
+            border-left-color: #dc3545;
+        }
+        .log-entry p {
+            margin: 5px 0;
+        }
+        #customerNameInput {
+            margin-bottom: 10px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #addLogButton {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #addLogButton:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simple Audience Builder</h1>
+        <div id="audience-builder">
+            <h2>Create Audience</h2>
+            <div id="rules-container"></div>
+            <button onclick="addRule()">Add Rule</button>
+            <button onclick="checkAudienceSize()">Check Audience Size</button>
+            <button onclick="saveAudience()">Save Audience</button>
+            <div id="audience-size"></div>
+        </div>
+        <div id="campaigns">
+            <h2>Past Campaigns</h2>
+            <ul id="campaign-list"></ul>
+        </div>
+        <div id="communication-log">
+            <h1>Communication Log</h1>
+            <input type="text" id="customerNameInput" placeholder="Enter Customer Name">
+            <button id="addLogButton">Add Log Entry</button>
+            <div id="logContainer"></div>
+        </div>
+    
+    </div>
+
+   
+    <script>
+        let rules = [];
+
+        function addRule() {
+            const ruleId = `rule-${rules.length}`;
+            const ruleHtml = `
+                <div id="${ruleId}" class="rule">
+                    <select class="field">
+                        <option value="totalSpends">Total Spends</option>
+                        <option value="maxVisits">Max Visits</option>
+                        <option value="lastVisited">Last Visited</option>
+                    </select>
+                    <select class="condition">
+                        <option value=">">></option>
+                        <option value="<"><</option>
+                        <option value="=">=</option>
+                        <option value="!=">!=</option>
+                    </select>
+                    <input type="text" class="value" />
+                    <select class="logic">
+                        <option value="AND">AND</option>
+                        <option value="OR">OR</option>
+                    </select>
+                    <button onclick="removeRule('${ruleId}')">Remove</button>
+                </div>
+            `;
+            document.getElementById('rules-container').insertAdjacentHTML('beforeend', ruleHtml);
+            rules.push(ruleId);
+        }
+
+        function removeRule(ruleId) {
+            document.getElementById(ruleId).remove();
+            rules = rules.filter(id => id !== ruleId);
+        }
+
+        function checkAudienceSize() {
+            const audienceSize = calculateAudienceSize();
+            document.getElementById('audience-size').innerText = `Audience Size: ${audienceSize}`;
+        }
+
+        function saveAudience() {
+            alert('Audience saved!');
+            displayPastCampaigns();
+        }
+
+        function calculateAudienceSize() {
+            return Math.floor(Math.random() * 1000);
+        }
+
+        function displayPastCampaigns() {
+            const campaigns = [
+                { id: 1, name: 'Campaign 1', date: '2024-01-01' },
+                { id: 2, name: 'Campaign 2', date: '2024-02-01' }
+            ];
+            const campaignList = document.getElementById('campaign-list');
+            campaignList.innerHTML = '';
+            campaigns.forEach(campaign => {
+                const li = document.createElement('li');
+                li.textContent = `${campaign.name} - ${campaign.date}`;
+                campaignList.appendChild(li);
+            });
+        }
+
+        document.getElementById('addLogButton').addEventListener('click', function () {
+            const customerName = document.getElementById('customerNameInput').value;
+            if (customerName.trim() !== '') {
+                const deliveryStatus = Math.random() < 0.9 ? 'SENT' : 'FAILED';
+                const logEntry = document.createElement('div');
+                logEntry.classList.add('log-entry');
+                if (deliveryStatus === 'FAILED') {
+                    logEntry.classList.add('failed');
+                }
+                logEntry.innerHTML = `
+                    <p><strong>Customer Name:</strong> ${customerName}</p>
+                    <p><strong>Message:</strong> Hi ${customerName}, here is 10% off on your next order</p>
+                    <p><strong>Delivery Status:</strong> ${deliveryStatus}</p>
+                `;
+                document.getElementById('logContainer').appendChild(logEntry);
+                document.getElementById('customerNameInput').value = '';
+            } else {
+                alert('Please enter a valid customer name');
+            }
+        });
+    </script>
+</body>
+</html>

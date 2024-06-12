@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation</title>
+    <link rel="stylesheet" href="confirmation.css">
+</head>
+<body>
+    <h1>Application Submitted</h1>
+    <p>Thank you for applying! Here is the information you submitted:</p>
+    <div id="applicantInfo"></div>
+    <script>
+        const applicantData = JSON.parse(localStorage.getItem('applicantData'));
+        if (applicantData) {
+            const infoDiv = document.getElementById('applicantInfo');
+            infoDiv.innerHTML = `
+                <p>Name: ${applicantData.name}</p>
+                <p>Email: ${applicantData.email}</p>
+                <p>Phone: ${applicantData.phone}</p>
+                <p>Experience: ${applicantData.experience}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
